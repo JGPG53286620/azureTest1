@@ -1,6 +1,7 @@
 import azure.functions as func
 import logging
 import graph_connect
+import pandas as pd
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
@@ -8,7 +9,5 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 def CreateGraphToken(req: func.HttpRequest) -> func.HttpResponse:
     
     access_token = graph_connect.create_token()
-
-    sharepointSite=graph_connect.get_GraphAPI(endpoint="sites?search=Data_lake", access_token=access_token)
-
-    return func.HttpResponse(str(sharepointSite))
+    df=graph_connect.get_sharepointList_by_name(access_token=access_token, siteName="Data_lake", listName="ADCOT_CUENTAS_PLATAFORMAS", columnas_originales=["TIPO", "PROPIETARIO"])
+    return func.HttpResponse(str(df))
